@@ -82,7 +82,6 @@ public class LiveGunOriginScript : MonoBehaviour
     //球発射関数
     public IEnumerator Fire(GameObject targetObj = null)
     {
-
         //コルーチン重複防止
         if (isRunningFire || isReload)
         {
@@ -91,7 +90,7 @@ public class LiveGunOriginScript : MonoBehaviour
 
         isRunningFire = true;
 
-        if (!isForcus)
+        if(targetEnemy != targetObj)
         {
             targetEnemy = targetObj;
             StartCoroutine(TargetLook());
@@ -192,15 +191,13 @@ public class LiveGunOriginScript : MonoBehaviour
                     isForcus = true;
                     
                     gunObj.transform.LookAt(Vector3.Lerp(targetEnemy.transform.position, Vector3.forward, 0.02f));
-
-                    return null;
-
                 }
                 else
                 {
                     isForcus = false;
                     break;
                 }
+                return null;
             }
         }
         return null;
