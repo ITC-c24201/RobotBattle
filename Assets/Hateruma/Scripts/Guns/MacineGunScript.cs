@@ -6,7 +6,6 @@ using static UnityEngine.GraphicsBuffer;
 
 public class MacineGunScript : LiveGunOriginScript
 {
-    public GameObject targetObj;
     void Start()
     {
         //MacineGun用にパラメーターを設定
@@ -44,7 +43,7 @@ public class MacineGunScript : LiveGunOriginScript
 
         if (Input.GetButton("Fire1"))
         {
-            StartCoroutine(Fire(targetObj));
+            StartCoroutine(Fire());
         }
     }
 }

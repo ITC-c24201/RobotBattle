@@ -25,7 +25,11 @@ public class BulletScript : MonoBehaviour
         col = GetComponent<Collider>();
     }
 
-    //弾の挙動制御
+    /// <summary>
+    /// 弾の挙動制御
+    /// </summary>
+    /// <param name="speed">弾速</param>
+    /// <param name="range">射程</param>
     public IEnumerator Shot(float speed, float range)
     {
         meshRen.enabled = true;//弾表示
@@ -74,7 +78,9 @@ public class BulletScript : MonoBehaviour
         BulletHit();//見た目と当たり判定非表示
     }
 
-    //ダメージ値を計算して返す
+    /// <summary>
+    /// ダメージ値を計算して返す
+    /// </summary>
     public int GetDamage()
     {
         damage = (int)(mass * attenuation);
@@ -86,7 +92,9 @@ public class BulletScript : MonoBehaviour
         BulletHit();//見た目と当たり判定非表示
     }
 
-    //見た目と当たり判定非表示
+    /// <summary>
+    /// 着弾時の処理(見た目と当たり判定非表示)
+    /// </summary>
     void BulletHit()
     {
         hit = false;

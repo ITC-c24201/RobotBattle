@@ -38,6 +38,9 @@ public class LiveGunOriginScript : MonoBehaviour
     public EnergyScript energySC;//エネルギースクリプト
     public CoreScript coreSC;//コアスクリプト
 
+    /// <summary>
+    /// Startの変わりに継承先から呼ぶ準備関数
+    /// </summary>
     public void Preparation()
     {
         gunObj = transform.parent.gameObject;
@@ -60,7 +63,10 @@ public class LiveGunOriginScript : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// 弾プレハブを装弾数分用意する
+    /// </summary>
+    /// <param name="amount">装弾数</param>
     List<GameObject> BulletInst(int amount)
     {
         var bulletList = new List<GameObject>();
@@ -79,7 +85,10 @@ public class LiveGunOriginScript : MonoBehaviour
     }
 
 
-    //球発射関数
+    ///<summary>
+    ///球発射関数
+    ///</summary>
+    ///<param name="targetObj">ターゲットオブジェクト</param>
     public IEnumerator Fire(GameObject targetObj = null)
     {
         //コルーチン重複防止
@@ -88,12 +97,12 @@ public class LiveGunOriginScript : MonoBehaviour
             yield break;
         }
 
-        isRunningFire = true;
+        isRunningFire = true;//処理始動
 
-        if(targetEnemy != targetObj)
+        if (!isForcus)//コルーチン処理中じゃなかったら
         {
-            targetEnemy = targetObj;
-            StartCoroutine(TargetLook());
+            targetEnemy = targetObj;//ターゲットを取得
+            StartCoroutine(TargetLook());//ターゲットに銃口を向ける
         }
 
         //残弾があれば撃つ
@@ -155,11 +164,13 @@ public class LiveGunOriginScript : MonoBehaviour
         }
         yield return new WaitForSeconds(1f / fireRate);//発射間隔分待つ
 
-        isRunningFire = false;
+        isRunningFire = false;//処理終了
 
     }
 
-    //リロード関数
+    /// <summary>
+    /// リロード関数
+    /// </summary>
     IEnumerator Reload()
     {
         yield return new WaitForSeconds(reloadTime);//リロード時間
@@ -177,6 +188,9 @@ public class LiveGunOriginScript : MonoBehaviour
         isReload = false;
     }
 
+    /// <summary>
+    /// ターゲットに銃口を向ける
+    /// </summary>
     IEnumerator TargetLook()
     {
         if (targetEnemy != null)
@@ -185,21 +199,27 @@ public class LiveGunOriginScript : MonoBehaviour
             {
                 Vector3 targetDir = targetEnemy.transform.position - gunRootObj.transform.position;//ターゲットの方向
                 float angle = Vector3.Angle(targetDir, gunRootObj.transform.forward);//銃本体とターゲットの方向の差分
+                Quaternion targetRot = Quaternion.LookRotation(targetDir.normalized);//ターゲットの方向までの角度
 
+                //差分が22.5度以下だったら
                 if (angle <= 22.5f)
                 {
                     isForcus = true;
-                    
-                    gunObj.transform.LookAt(Vector3.Lerp(targetEnemy.transform.position, Vector3.forward, 0.02f));
+
+                    //ターゲットの方向まで滑らかに回転
+                    gunObj.transform.rotation = Quaternion.Slerp(
+                        gunObj.transform.rotation,
+                        targetRot,
+                        0.2f
+                        );
                 }
                 else
                 {
                     isForcus = false;
                     break;
                 }
-                return null;
+                yield return null;//1フレーム待つ
             }
         }
-        return null;
     }
 }
